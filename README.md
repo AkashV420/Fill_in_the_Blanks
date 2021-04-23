@@ -46,13 +46,13 @@ and Machine Learning/ Deep Learning.
 
 2. Then a selected image(eg. 2,jpg)window will open,
 
-    ![a](/home/aakash/Desktop/Fill_in_the_Blanks/a.png)
+    ![a](./a.png)
 
-    1. First select the options in the given box,![Screenshot from 2021-04-04 05-01-23](/home/aakash/Desktop/Fill_in_the_Blanks/b.png)
+    1. First select the options in the given box,![b](./b.png)
 
 4. Press ENTER
 
-5. Again new window will appear, this time select the sentence,![Screenshot from 2021-04-04 05-01-41](/home/aakash/Desktop/Fill_in_the_Blanks/c.png)
+5. Again new window will appear, this time select the sentence,![c](./c.png)
 
 6. The selected options and sentences obtained are stored in the following files:
 
@@ -61,7 +61,7 @@ and Machine Learning/ Deep Learning.
 
 7. Output: the resultant answer for fill in the blanks will be denoted by "**Matched : <answer>**"
 
-    ​	![Screenshot from 2021-04-04 05-00-31](/home/aakash/Desktop/Fill_in_the_Blanks/d.png)
+    ​	![d](./d.png)
 
 ## File structure
 
@@ -375,7 +375,7 @@ for a in content_list2:
 
 ### Blank filled by the suitable option from the given options:
 
-![Screenshot from 2021-04-04 05-00-31](/home/aakash/Desktop/Fill_in_the_Blanks/d.png)
+![d](./d.png)
 
 
 
