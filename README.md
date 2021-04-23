@@ -1,6 +1,4 @@
-# Project ASSIGNMENT 1:
-
-**Name**: Akash Verma
+#Fill in the Blanks
 
 ## Aim
 
