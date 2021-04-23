@@ -46,13 +46,13 @@ and Machine Learning/ Deep Learning.
 
 2. Then a selected image(eg. 2,jpg)window will open,
 
-    ![a](/home/aakash/Pictures/a.png)
+    ![a](/home/aakash/Desktop/Fill_in_the_Blanks/a.png)
 
-3. First select the options in the given box,![Screenshot from 2021-04-04 05-01-23](/home/aakash/Pictures/Screenshot from 2021-04-04 05-01-23.png)
+    1. First select the options in the given box,![Screenshot from 2021-04-04 05-01-23](/home/aakash/Desktop/Fill_in_the_Blanks/b.png)
 
 4. Press ENTER
 
-5. Again new window will appear, this time select the sentence,![Screenshot from 2021-04-04 05-01-41](/home/aakash/Pictures/Screenshot from 2021-04-04 05-01-41.png)
+5. Again new window will appear, this time select the sentence,![Screenshot from 2021-04-04 05-01-41](/home/aakash/Desktop/Fill_in_the_Blanks/c.png)
 
 6. The selected options and sentences obtained are stored in the following files:
 
@@ -61,7 +61,7 @@ and Machine Learning/ Deep Learning.
 
 7. Output: the resultant answer for fill in the blanks will be denoted by "**Matched : <answer>**"
 
-    ​	![Screenshot from 2021-04-04 05-00-31](/home/aakash/Pictures/Screenshot from 2021-04-04 05-00-31.png)
+    ​	![Screenshot from 2021-04-04 05-00-31](/home/aakash/Desktop/Fill_in_the_Blanks/d.png)
 
 ## File structure
 
@@ -76,6 +76,10 @@ and Machine Learning/ Deep Learning.
 ├── 4.png
 ├── 5.jpg
 ├── 6.jpg
+├── a.jpg
+├── b.png
+├── c.png
+├── d.png
 ├── readme.pdf
 └── readme.md
 ```
@@ -371,7 +375,7 @@ for a in content_list2:
 
 ### Blank filled by the suitable option from the given options:
 
-![Screenshot from 2021-04-04 05-00-31](/home/aakash/Pictures/Screenshot from 2021-04-04 05-00-31.png)
+![Screenshot from 2021-04-04 05-00-31](/home/aakash/Desktop/Fill_in_the_Blanks/d.png)
 
 
 
