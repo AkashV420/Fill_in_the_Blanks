@@ -1,191 +1,24 @@
-# Project ASSIGNMENT 1:
+from logging import getLogger
+from pathlib import Path
+from typing import List, Dict, Union, Optional
 
-**Name**: Akash Verma
-
-## Aim
-
-We are well familiar with the “fill in the blanks” homework where we choose the most
-suitable word from the given words and fill the blanks to complete the sentence. Suppose you
-have an image of the homework (Please refer attached images). You want to complete the
-homework (i.e. fill those blanks with a proper word from the box) using image processing
-and Machine Learning/ Deep Learning.
-
-## Libraries 
-
-- pytesseract
-
-- pathlib
-
-- numpy
-
-- torch
-
-- overrides
-
-- transformers
-
-- deeppavlov
-
-- PIL
-
-- cv2
-
-- typing
-
-  ​
-
-  ​
-
-## Language 
-
-- Python3 
-
-## How to run
-
-1. Execute the following command:
-
-    > python3 main.py
-
-2. Then a selected image(eg. 2,jpg)window will open,
-
-    ![a](/home/aakash/Pictures/a.png)
-
-3. First select the options in the given box,![Screenshot from 2021-04-04 05-01-23](/home/aakash/Pictures/Screenshot from 2021-04-04 05-01-23.png)
-
-4. Press ENTER
-
-5. Again new window will appear, this time select the sentence,![Screenshot from 2021-04-04 05-01-41](/home/aakash/Pictures/Screenshot from 2021-04-04 05-01-41.png)
-
-6. The selected options and sentences obtained are stored in the following files:
-
-    - `crp_opt.txt` contains OPTIONS.
-    - `crp_qs.txt` contains SENTENCES.
-
-7. Output: the resultant answer for fill in the blanks will be denoted by "**Matched : <answer>**"
-
-    ​	![Screenshot from 2021-04-04 05-00-31](/home/aakash/Pictures/Screenshot from 2021-04-04 05-00-31.png)
-
-## File structure
-
-```less
-.
-├── main.py
-├── crp_opt.txt
-├── crp_qs.txt
-├── 1.jpg
-├── 2.jpg
-├── 3.jpg
-├── 4.png
-├── 5.jpg
-├── 6.jpg
-├── readme.pdf
-└── readme.md
-```
-
-## Code explanation
-
-### crp_opt.txt
-
-Contains the options of the selected image.
-
-### crp_qs.txt
-
-Contains the sentences of the selected image. 
-
-### main.py
-
-In this file I followed the following steps:
-
-#### 1. Using Image processing(openCV, tesseract)
-
-```py
-from PIL import Image
-import pytesseract
-import cv2
 import numpy as np
+import torch
+from overrides import overrides
+from transformers import AutoModelForSequenceClassification, AutoConfig
+from transformers.data.processors.utils import InputFeatures
 
-# print(pytesseract.get_tesseract_version())
+from deeppavlov.core.common.errors import ConfigError
+from deeppavlov.core.commands.utils import expand_path
+from deeppavlov.core.common.registry import register
+from deeppavlov.core.models.torch_model import TorchModel
+from logging import getLogger
+from transformers import AutoTokenizer, AutoModelForMaskedLM
+from deeppavlov.core.models.component import Component
+from deeppavlov.models.preprocessors.mask import Mask
+import re
+log = getLogger(__name__)
 
-# quit(0)
-
- # Read image
-im = cv2.imread("2.jpg")
-
-# Select ROI
-r = cv2.selectROI(im)
-
-# Crop image
-imCrop = im[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
-a = pytesseract.image_to_string(imCrop)
-imag = open("crp_opt.txt","w+")
-imag.write(a)
-imag.close()
-
-my_file = open("crp_opt.txt", "r")
-content = my_file.read()
-
-content_list = [ line.split(' ') for line in content.split("\n")]
-content_list.pop()
-
-content_list1 = []
-for line in content_list:
-#     new_line = list()
-    for word in line:
-        new_word = ''.join([  x for x in word if ord(x.lower())<=ord('z') and ord(x.lower())>=ord('a')])
-        if len(new_word)>0:
-            content_list1.append(new_word)
-#         print(new_word)
-#     if len(new_line)>0:
-#         content_list2.append(new_line)
-
-my_file.close()
-
-print(content_list1)
-
-options = content_list1
-
-#################################################################################
-
-r = cv2.selectROI(im)
-
-imCrop = im[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
-a = pytesseract.image_to_string(imCrop,config='--oem 1 --psm 6')
-imag = open("crp_qs.txt","w+")
-imag.write(a)
-imag.close()
-
-my_file = open("crp_qs.txt", "r")
-content = my_file.read()
-
-content_list = [ line.split(' ') for line in content.split("\n")]
-content_list.pop()
-print(content_list)
-
-content_list2 = []
-for line in content_list:
-    new_line = list()
-    for word in line:
-        new_word = ''.join([  x for x in word if (ord(x.lower())<=ord('z') and ord(x.lower())>=ord('a')) or (x=='-' or x=='_' or x=='[' or x == ']')])
-        if len(new_word)>0 and np.array([ 1 if x=='-' or x=='_' else 0 for x in new_word]).all():
-            new_word='[MASK]'
-        if len(new_word)>0:
-            new_line.append(new_word)
-#         print(new_word)
-    if len(new_line)>0:
-        content_list2.append(new_line)
-
-my_file.close()
-
-print(content_list2)
-```
-
-- selected the image using computer vision and image processing. 
-- As there was not any information regading the position of the options box I choosed to select the options manually from the image and after cleaning converted into text converted using python tesseract library and appended it into the list(content_list_1).
-- Similarly, again selected region of interest from the image i.e sentences and after cleaning the data appended into another list(content_list2). 
-
-#### 2. NLP Model(Machine Learning)
-
-```py
 class TorchTransformersMLMPreprocessor(Component):
     def __init__(self,
                  vocab_file: str,
@@ -287,23 +120,91 @@ torch_preprocesor = TorchTransformersMLMPreprocessor('bert-base-uncased', max_se
 
 # features, mask_idxs = torch_preprocesor()
 model = TorchTransformersMLMModel(pretrained_bert = 'bert-base-uncased',preprocessor =torch_preprocesor,  save_path = './sample_data') #'/content/sample_data'
-```
 
-Used pre-trained Torch Transformers models 
 
-#### 3. Searching for perfect sentence
+##################################################################
+##################################################################
+from PIL import Image
+import pytesseract
+import cv2
+import numpy as np
 
-Since I was unable to find the position of blank, I used the brute force algorithm to compare the sentences across all the matches. Our algorithm is as follows.  Suppose the example is 
-‘The boy __ the cake.’
-We make all the possible sentences with the words that we can fill in the blank. 
-‘The boy eats the cake’
-‘The boy drinks the cake’
-’The boy itself the cake’ 
-….
+# print(pytesseract.get_tesseract_version())
 
-We compare each of these sentence to the sentence produces by the NLP model. Our intuition is that the NLP model will definitely produce a matching results,  since the number of words that makes sense at those position are finite. Hence using matching, we are able to find the required sentence.
+# quit(0)
 
-```py
+ # Read image
+im = cv2.imread("2.jpg")
+
+# Select ROI
+r = cv2.selectROI(im)
+
+# Crop image
+imCrop = im[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
+a = pytesseract.image_to_string(imCrop)
+imag = open("crp_opt.txt","w+")
+imag.write(a)
+imag.close()
+
+my_file = open("crp_opt.txt", "r")
+content = my_file.read()
+
+content_list = [ line.split(' ') for line in content.split("\n")]
+content_list.pop()
+
+content_list1 = []
+for line in content_list:
+#     new_line = list()
+    for word in line:
+        new_word = ''.join([  x for x in word if ord(x.lower())<=ord('z') and ord(x.lower())>=ord('a')])
+        if len(new_word)>0:
+            content_list1.append(new_word)
+#         print(new_word)
+#     if len(new_line)>0:
+#         content_list2.append(new_line)
+
+my_file.close()
+
+print(content_list1)
+
+options = content_list1
+
+#################################################################################
+
+r = cv2.selectROI(im)
+
+imCrop = im[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
+a = pytesseract.image_to_string(imCrop,config='--oem 1 --psm 6')
+imag = open("crp_qs.txt","w+")
+imag.write(a)
+imag.close()
+
+my_file = open("crp_qs.txt", "r")
+content = my_file.read()
+
+content_list = [ line.split(' ') for line in content.split("\n")]
+content_list.pop()
+print(content_list)
+
+content_list2 = []
+for line in content_list:
+    new_line = list()
+    for word in line:
+        new_word = ''.join([  x for x in word if (ord(x.lower())<=ord('z') and ord(x.lower())>=ord('a')) or (x=='-' or x=='_' or x=='[' or x == ']')])
+        if len(new_word)>0 and np.array([ 1 if x=='-' or x=='_' else 0 for x in new_word]).all():
+            new_word='[MASK]'
+        if len(new_word)>0:
+            new_line.append(new_word)
+#         print(new_word)
+    if len(new_line)>0:
+        content_list2.append(new_line)
+
+my_file.close()
+
+print(content_list2)
+########################################################################
+##########################################################################
+
 sen = content_list2
 ll = content_list1
 for a in content_list2:
@@ -361,26 +262,3 @@ for a in content_list2:
             break
     if flag == 1:
         break 
-```
-
-
-
-## OUTPUT EXPLAINED
-
-### Selected fill in the blank:![Screenshot from 2021-04-04 05-01-41](/home/aakash/Pictures/Screenshot from 2021-04-04 05-01-41.png)
-
-
-
-### Blank filled by the suitable option from the given options:
-
-![Screenshot from 2021-04-04 05-00-31](/home/aakash/Pictures/Screenshot from 2021-04-04 05-00-31.png)
-
-
-
-## OPTIMIZATION FURTHER
-
-- ***We can optimise further by using a better image processing solution. Currently, whenever our system fails, most of the time it is the due to the failing of the image processing model.***
-
-
-- ***We can automate the process of seperating the option words with the fill the blanks sentence by using a targeted dataset for this problem.***
-
