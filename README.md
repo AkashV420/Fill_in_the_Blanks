@@ -369,7 +369,7 @@ for a in content_list2:
 
 ## OUTPUT EXPLAINED
 
-### Selected fill in the blank:![Screenshot from 2021-04-04 05-01-41](/home/aakash/Pictures/Screenshot from 2021-04-04 05-01-41.png)
+### Selected fill in the blank:![c](./c.png)
 
 
 
